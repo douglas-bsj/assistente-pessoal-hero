@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>J.A.R.V.I.S. — Assistente Pessoal Local</title>
+  <meta name="description" content="J.A.R.V.I.S.: assistente pessoal de voz 100% local, com memória de longo prazo, Ollama, Whisper e pgvector." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <h1 id="brandTitle">J.A.R.V.I.S.</h1>
+      <span class="brand-sub" id="brandSub">Protocolo de Segurança Ativo</span>
+    </div>
+    <div class="protocol-selector" id="protocolSelector">
+      <button class="proto-btn active" data-agent="jarvis" title="J.A.R.V.I.S. — Segurança e Núcleo">
+        <span class="proto-dot" style="--c: #1edcff;"></span>JARVIS
+      </button>
+      <button class="proto-btn" data-agent="friday" title="F.R.I.D.A.Y. — Socialização, Táticas e Humor">
+        <span class="proto-dot" style="--c: #ffaa2d;"></span>FRIDAY
+      </button>
+      <button class="proto-btn" data-agent="edith" title="E.D.I.T.H. — Cibersegurança, Ataque e Defesa Virtual (Sites, Apps e Redes)">
+        <span class="proto-dot" style="--c: #b46eff;"></span>EDITH
+      </button>
+      <button class="proto-btn" data-agent="dum_e" title="D.U.M.-E & U — Manutenção e Mídia">
+        <span class="proto-dot" style="--c: #32e68c;"></span>D.U.M.-E & U
+      </button>
+    </div>
+    <div class="status-pills" id="statusPills">
+      <span class="pill" id="pill-core"><i></i>Núcleo</span>
+      <span class="pill" id="pill-ollama"><i></i>Cérebro</span>
+      <span class="pill" id="pill-memory"><i></i>Memória</span>
+      <span class="pill" id="pill-stt"><i></i>Audição</span>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+  </header>
+
+  <main class="layout">
+    <!-- Banco de memórias -->
+    <aside class="panel memory-panel" aria-label="Banco de memórias">
+      <div class="panel-head">
+        <h2>Hipocampo</h2>
+        <span class="badge" id="memCount">0</span>
+      </div>
+      <form class="mem-form" id="memForm" autocomplete="off">
+        <input id="memInput" type="text" placeholder="Ensinar algo ao Jarvis..." />
+        <button id="memAddBtn" type="submit" title="Gravar memória">+</button>
+      </form>
+      <input id="memSearch" class="mem-search" type="search" placeholder="Filtrar memórias..." />
+      <ul class="mem-list" id="memList"></ul>
+    </aside>
+
+    <!-- Núcleo / reator -->
+    <section class="core" aria-label="Núcleo de voz">
+      <div class="reactor-wrap">
+        <canvas id="reactor" width="560" height="560"></canvas>
+        <div class="reactor-label">
+          <span id="stateLabel">Inicializando</span>
+          <small id="stateHint">Conectando ao núcleo...</small>
+        </div>
+      </div>
+      <div class="live-caption" id="liveCaption"></div>
+    </section>
+
+    <!-- Conversa -->
+    <section class="panel chat-panel" aria-label="Conversa">
+      <div class="panel-head">
+        <h2>Comunicação</h2>
+        <button class="ghost" id="resetBtn" title="Limpar conversa atual">Nova sessão</button>
+      </div>
+      <div class="chat-log" id="chatLog"></div>
+    </section>
+  </main>
+
+  <footer class="dock">
+    <button class="mic-btn" id="micBtn" title="Segure para falar (ou segure Espaço)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
+    </button>
+    <form class="prompt" id="promptForm" autocomplete="off">
+      <input id="promptInput" type="text" placeholder="Fale ou digite um comando, senhor..." />
+      <button id="sendBtn" type="submit">Enviar</button>
+    </form>
+    <div class="toggles">
+      <label class="toggle" title="Mãos-livres: detecta sua voz automaticamente e permite interromper o Jarvis">
+        <input type="checkbox" id="handsFree" /><span></span>Mãos-livres
+      </label>
+      <label class="toggle" title="Respostas faladas">
+        <input type="checkbox" id="voiceOut" checked /><span></span>Voz
+      </label>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

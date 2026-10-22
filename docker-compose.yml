@@ -1,0 +1,52 @@
+name: jarvis
+
+services:
+  # Memória de longo prazo: PostgreSQL + pgvector
+  jarvis-db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jarvis}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stark_industries}
+      POSTGRES_DB: ${POSTGRES_DB:-jarvis_memory}
+    volumes:
+      - jarvis_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jarvis} -d ${POSTGRES_DB:-jarvis_memory}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  # Núcleo: FastAPI (cérebro, ouvido, boca) + interface web
+  jarvis-core:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${JARVIS_PORT:-8000}:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-jarvis}:${POSTGRES_PASSWORD:-stark_industries}@jarvis-db:5432/${POSTGRES_DB:-jarvis_memory}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      OLLAMA_CHAT_MODEL: ${OLLAMA_CHAT_MODEL:-qwen2.5:3b}
+      OLLAMA_EMBED_MODEL: ${OLLAMA_EMBED_MODEL:-nomic-embed-text}
+      OLLAMA_AUTO_PULL: ${OLLAMA_AUTO_PULL:-true}
+      WHISPER_MODEL: ${WHISPER_MODEL:-base}
+      WHISPER_LANGUAGE: ${WHISPER_LANGUAGE:-pt}
+      TTS_VOICE: ${TTS_VOICE:-pt-BR-AntonioNeural}
+      TTS_RATE: ${TTS_RATE:-+8%}
+      JARVIS_USER_NAME: ${JARVIS_USER_NAME:-senhor}
+    extra_hosts:
+      # Garante que host.docker.internal funcione também no Linux
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - jarvis_models:/models            # cache dos modelos Whisper
+      - ./backend/app:/app/app           # hot-edit do backend
+      - ./frontend:/app/frontend         # hot-edit da interface
+    depends_on:
+      jarvis-db:
+        condition: service_healthy
+
+volumes:
+  jarvis_db_data:
+  jarvis_models:
